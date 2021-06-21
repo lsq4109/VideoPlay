@@ -1,4 +1,6 @@
-apply plugin: 'com.android.library'
+//apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'  //添加这两行
+group='com.github.lsq4109'
 
 android {
     compileSdkVersion 29
@@ -35,19 +37,18 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar","*.aar"])
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+//    implementation fileTree(dir: "libs", include: ["*.jar","*.aar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.annotation:annotation:1.1.0'
 
+//    implementation files ('libs/lecast.aar')
+    compileOnly files('libs/lecast.aar')
+
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
-
-//    compileOnly files('libs/lecast.aar')
-
-    implementation 'tv.danmaku.ijk.media:ijkplayer-java:0.8.8'
-    implementation 'tv.danmaku.ijk.media:ijkplayer-exo:0.8.8'
     implementation 'com.andkulikov:transitionseverywhere:2.0.0-beta01'
     implementation 'com.google.android.exoplayer:exoplayer:2.11.3'
     implementation 'com.google.android.exoplayer:extension-rtmp:2.11.3'
 
 }
-apply from: 'j-build.gradle'
+//apply from: 'j-build.gradle'

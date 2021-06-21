@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
+import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
  基类管理器
@@ -154,6 +155,9 @@ public abstract class GSYVideoBaseManager implements IMediaPlayer.OnPreparedList
 
     protected IPlayerManager getPlayManager() {
         return PlayerFactory.getPlayManager();
+    }
+    public IjkMediaPlayer getIjkMediaPlayer() {
+        return playerManager.getIjkMediaPlayer();
     }
 
     protected ICacheManager getCacheManager() {

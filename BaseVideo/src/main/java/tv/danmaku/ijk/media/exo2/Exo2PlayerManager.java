@@ -18,6 +18,7 @@ import com.shuyu.gsyvideoplayer.player.BasePlayerManager;
 import java.util.List;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
+import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
  * EXOPlayer2
@@ -41,6 +42,11 @@ public class Exo2PlayerManager extends BasePlayerManager {
     @Override
     public IMediaPlayer getMediaPlayer() {
         return mediaPlayer;
+    }
+
+    @Override
+    public IjkMediaPlayer getIjkMediaPlayer() {
+        return null;
     }
 
     @Override

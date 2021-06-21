@@ -9,6 +9,7 @@ import com.shuyu.gsyvideoplayer.model.VideoOptionModel;
 import java.util.List;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
+import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
  * 播放器差异管理接口
@@ -18,6 +19,8 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
 public interface IPlayerManager {
 
     IMediaPlayer getMediaPlayer();
+    IjkMediaPlayer getIjkMediaPlayer();
+
 
     /**
      * 初始化播放内核

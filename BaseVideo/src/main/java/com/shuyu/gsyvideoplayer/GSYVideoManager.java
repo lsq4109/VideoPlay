@@ -13,6 +13,8 @@ import com.shuyu.gsyvideoplayer.listener.GSYMediaPlayerListener;
 import com.shuyu.gsyvideoplayer.utils.CommonUtil;
 import com.shuyu.gsyvideoplayer.video.base.GSYVideoPlayer;
 
+import tv.danmaku.ijk.media.player.IjkMediaPlayer;
+
 import static com.shuyu.gsyvideoplayer.utils.CommonUtil.hideNavKey;
 
 
@@ -150,5 +152,7 @@ public class GSYVideoManager extends GSYVideoBaseManager {
         }
         return gsyVideoPlayer != null;
     }
-
+    public static IjkMediaPlayer getIjkMediaPlayeru() {
+        return videoManager.getIjkMediaPlayer();
+    }
 }

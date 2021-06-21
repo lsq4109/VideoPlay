@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -23,104 +24,138 @@
         android:layout_alignParentBottom="true"
         android:background="#000000"
         android:scaleType="fitCenter" />
-
-    <LinearLayout
-        android:id="@+id/layout_bottom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/video_bottom_bg"
-        android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:visibility="visible">
-
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_alignParentBottom="true"
+       android:orientation="vertical">
+       <!--试看-->
        <LinearLayout
-           android:layout_width="match_parent"
-           android:layout_height="20dp"
-           android:orientation="horizontal"
-           android:paddingLeft="36dp"
-           android:paddingRight="33dp"
-           android:gravity="center_vertical">
+           android:id="@+id/try_watch"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_above="@+id/layout_bottom"
+           android:layout_marginBottom="7dp"
+           android:background="@drawable/volum_light_back"
+           android:paddingLeft="10dp"
+           android:paddingRight="10dp"
+           android:paddingTop="5dp"
+           android:paddingBottom="5dp"
+           android:layout_marginLeft="73dp"
+           android:orientation="horizontal">
            <TextView
-               android:id="@+id/current"
+               android:id="@+id/tryWatchTip"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
-               android:text="00:00"
-               android:textColor="#ffffff"
-               android:textSize="12dp" />
-
-           <SeekBar
-               android:id="@+id/progress"
-               android:layout_width="0dp"
-               android:layout_height="wrap_content"
-               android:layout_gravity="center_vertical"
-               android:layout_weight="1.0"
-               android:background="@null"
-               android:max="100"
-               android:maxHeight="2dp"
-               android:minHeight="2dp"
-               android:paddingTop="8dp"
-               android:paddingBottom="8dp"
-               android:progressDrawable="@drawable/video_seek_progress"
-               android:thumb="@drawable/video_seek_thumb_drawable" />
-
+               android:textColor="#FFFFFF"
+               android:text="观看完整影片，请 "/>
            <TextView
-               android:id="@+id/total"
+               android:id="@+id/tryWatchPay"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
-               android:text="00:00"
-               android:textColor="#ffffff"
-               android:textSize="12dp" />
+               android:textColor="#F06950"
+               android:text="进行购买"/>
        </LinearLayout>
+       <LinearLayout
+           android:id="@+id/layout_bottom"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:background="@drawable/video_bottom_bg"
+           android:gravity="center_vertical"
+           android:orientation="vertical"
+           android:visibility="visible">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="65dp">
-            <ImageView
-                android:id="@+id/bottom_start"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="33dp"
-                android:src="@drawable/video_stop" />
-            <ImageView
-                android:id="@+id/next_video"
-                android:layout_width="26dp"
-                android:layout_height="26dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="78dp"
-                android:src="@drawable/next_video" />
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true">
-                <TextView
-                    android:id="@+id/speed"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="30dp"
-                    android:layout_centerVertical="true"
-                    android:text="倍速"
-                    android:textColor="#ffffff" />
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="20dp"
+               android:orientation="horizontal"
+               android:paddingLeft="73dp"
+               android:paddingRight="73dp"
+               android:gravity="center_vertical">
+               <TextView
+                   android:id="@+id/current"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="00:00"
+                   android:textColor="#ffffff"
+                   android:textSize="12dp" />
 
-                <TextView
-                    android:id="@+id/resolution"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="30dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:text="清晰度"
-                    android:textColor="#ffffff" />
+               <SeekBar
+                   android:id="@+id/progress"
+                   android:layout_width="0dp"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center_vertical"
+                   android:layout_weight="1.0"
+                   android:background="@null"
+                   android:max="100"
+                   android:maxHeight="2dp"
+                   android:minHeight="2dp"
+                   android:paddingTop="8dp"
+                   android:paddingBottom="8dp"
+                   android:progressDrawable="@drawable/video_seek_progress"
+                   android:thumb="@drawable/video_seek_thumb_drawable" />
 
-            </LinearLayout>
-        </RelativeLayout>
+               <TextView
+                   android:id="@+id/total"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="00:00"
+                   android:textColor="#ffffff"
+                   android:textSize="12dp" />
+           </LinearLayout>
+
+           <RelativeLayout
+               android:layout_width="match_parent"
+               android:layout_height="65dp">
+              <LinearLayout
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginLeft="76dp"
+                  android:layout_centerVertical="true">
+                  <ImageView
+                      android:id="@+id/bottom_start"
+                      android:layout_width="26dp"
+                      android:layout_height="26dp"
+                      android:layout_centerVertical="true"
+                      android:layout_marginRight="45dp"
+                      android:src="@drawable/video_stop" />
+                  <ImageView
+                      android:id="@+id/next_video"
+                      android:layout_width="26dp"
+                      android:layout_height="26dp"
+                      android:layout_centerVertical="true"
+                      android:src="@drawable/next_video" />
+              </LinearLayout>
+               <LinearLayout
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:orientation="horizontal"
+                   android:layout_alignParentRight="true"
+                   android:layout_marginRight="73dp"
+                   android:layout_centerVertical="true">
+                   <TextView
+                       android:id="@+id/resolution"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_alignParentRight="true"
+                       android:layout_centerVertical="true"
+                       android:text="清晰度"
+                       android:textColor="#ffffff" />
+                   <TextView
+                       android:id="@+id/speed"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_centerVertical="true"
+                       android:text="倍速"
+                       android:layout_marginLeft="30dp"
+                       android:textColor="#ffffff" />
+
+               </LinearLayout>
+           </RelativeLayout>
 
 
-    </LinearLayout>
-
+       </LinearLayout>
+   </LinearLayout>
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -202,6 +237,7 @@
 
     <ProgressBar
         android:id="@+id/bottom_progressbar"
+        android:visibility="gone"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="1.5dp"
@@ -217,21 +253,76 @@
         android:layout_marginTop="6dp"
         android:visibility="gone" />
 
-    <moe.codeest.enviews.ENDownloadView
+<!--    <moe.codeest.enviews.ENDownloadView-->
+<!--        android:id="@+id/loading"-->
+<!--        android:layout_width="28dp"-->
+<!--        android:layout_height="28dp"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_centerVertical="true"-->
+<!--        android:visibility="invisible" />-->
+    <LinearLayout
         android:id="@+id/loading"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:visibility="invisible" />
+        android:gravity="center_vertical"
+        android:paddingLeft="13dp"
+        android:paddingRight="19dp"
+        android:background="@drawable/loading_back"
+        android:visibility="invisible">
+        <ImageView
+            android:id="@+id/loading_view"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/loading"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textSize="12dp"
+            android:layout_marginLeft="9dp"
+            android:text="正在加载中，请稍候"/>
 
-    <moe.codeest.enviews.ENPlayView
+    </LinearLayout>
+
+<!--    <moe.codeest.enviews.ENPlayView-->
+<!--        android:id="@+id/start"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_centerVertical="true"-->
+<!--        android:layout_gravity="center_vertical" />-->
+    <ImageView
         android:id="@+id/start"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_gravity="center_vertical" />
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/startimg" />
+<!--重播-->
+    <RelativeLayout
+        android:id="@+id/try_play"
+        android:layout_width="92dp"
+        android:layout_height="92dp"
+        android:visibility="gone"
+        android:layout_centerInParent="true">
+        <ImageView
+            android:id="@+id/repeatImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/tryplay"/>
+        <TextView
+            android:id="@+id/repeatTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="72dp"
+            android:layout_centerHorizontal="true"
+            android:textColor="#ffffff"
+            android:lineHeight="17dp"
+            android:textSize="12dp"
+            android:text="重播"/>
+    </RelativeLayout>
 
     <ImageView
         android:id="@+id/small_close"
@@ -249,8 +340,7 @@
         android:layout_height="54dp"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="18dp"
-        android:scaleType="centerInside"
+        android:layout_marginLeft="60dp"
         android:src="@drawable/unlock"
         android:visibility="gone" />
 
@@ -260,8 +350,7 @@
         android:layout_height="54dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="18dp"
-        android:scaleType="centerInside"
+        android:layout_marginRight="60dp"
         android:src="@drawable/take_photo"
         android:visibility="gone" />
 
@@ -274,8 +363,7 @@
         android:layout_toRightOf="@+id/back_tiny"
         android:background="@drawable/video_top_bg"
         android:gravity="center_vertical"
-        android:paddingLeft="30dp">
-
+        android:paddingLeft="73dp">
         <ImageView
             android:id="@+id/back"
             android:layout_width="26dp"
@@ -287,8 +375,8 @@
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/back"
             android:paddingLeft="8dp"
+            android:layout_toRightOf="@+id/back"
             android:text="123"
             android:textColor="@android:color/white"
             android:textSize="17dp" />
@@ -319,7 +407,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="33dp"
+                android:layout_marginRight="73dp"
                 android:gravity="center"
                 android:orientation="vertical">
                 <com.video.view.MyBatterView
@@ -351,6 +439,7 @@
         android:layout_above="@+id/layout_bottom"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="30dp"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:ignore="NotSibling" />
 
 </RelativeLayout>

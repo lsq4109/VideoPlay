@@ -36,6 +36,7 @@ public class IjkPlayerManager extends BasePlayerManager {
     /**
      * log level
      */
+//    private static int logLevel = IjkMediaPlayer.IJK_LOG_WARN;
     private static int logLevel = IjkMediaPlayer.IJK_LOG_DEFAULT;
 
     private static IjkLibLoader ijkLibLoader;
@@ -49,6 +50,11 @@ public class IjkPlayerManager extends BasePlayerManager {
 
     @Override
     public IMediaPlayer getMediaPlayer() {
+        return mediaPlayer;
+    }
+
+    @Override
+    public IjkMediaPlayer getIjkMediaPlayer() {
         return mediaPlayer;
     }
 

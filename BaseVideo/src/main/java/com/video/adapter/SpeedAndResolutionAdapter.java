@@ -66,6 +66,9 @@ public class SpeedAndResolutionAdapter extends Adapter<SpeedAndResolutionAdapter
             boolean spb = this.isSelect.equals(this.speed.get(position));
             holder.name.setTextColor(spb ? this.selectColor : this.defaultColor);
             holder.speed.setTextColor(spb ? this.selectColor : this.defaultColor);
+            if (speed.get(position).equals("1.0")){
+                holder.speed.setText("x . 正常");
+            }
         } else {
             holder.speed.setVisibility(View.GONE);
             holder.resolution.setVisibility(View.VISIBLE);

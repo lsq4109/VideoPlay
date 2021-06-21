@@ -18,6 +18,7 @@ import java.util.List;
 
 import tv.danmaku.ijk.media.player.AndroidMediaPlayer;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
+import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
  * 系统播放器，总觉得不好用
@@ -43,6 +44,11 @@ public class SystemPlayerManager extends BasePlayerManager {
     @Override
     public IMediaPlayer getMediaPlayer() {
         return mediaPlayer;
+    }
+
+    @Override
+    public IjkMediaPlayer getIjkMediaPlayer() {
+        return null;
     }
 
     @Override

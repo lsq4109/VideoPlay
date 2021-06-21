@@ -174,6 +174,10 @@ public abstract class GSYVideoControlView extends GSYVideoView implements View.O
     //点击锁屏的回调
     protected LockClickListener mLockClickListener;
 
+    //关闭进度滑动
+    protected boolean closeSeek = false;
+
+
     protected GSYVideoProgressListener mGSYVideoProgressListener;
 
     public GSYVideoControlView(@NonNull Context context) {
@@ -352,12 +356,14 @@ public abstract class GSYVideoControlView extends GSYVideoView implements View.O
                 cancelProgressTimer();
                 if (mProgressBar != null) {
                     mProgressBar.setProgress(100);
+                    mCurrentTimeTextView.setText(CommonUtil.stringForTime(0));
                 }
                 if (mCurrentTimeTextView != null && mTotalTimeTextView != null) {
                     mCurrentTimeTextView.setText(mTotalTimeTextView.getText());
                 }
                 if (mBottomProgressBar != null) {
                     mBottomProgressBar.setProgress(100);
+                    mCurrentTimeTextView.setText(CommonUtil.stringForTime(0));
                 }
                 break;
         }
@@ -688,13 +694,15 @@ public abstract class GSYVideoControlView extends GSYVideoView implements View.O
             curHeight = CommonUtil.getCurrentScreenLand((Activity) getActivityContext()) ? mScreenWidth : mScreenHeight;
         }
         if (mChangePosition) {
-            int totalTimeDuration = getDuration();
-            mSeekTimePosition = (int) (mDownPosition + (deltaX * totalTimeDuration / curWidth) / mSeekRatio);
-            if (mSeekTimePosition > totalTimeDuration)
-                mSeekTimePosition = totalTimeDuration;
-            String seekTime = CommonUtil.stringForTime(mSeekTimePosition);
-            String totalTime = CommonUtil.stringForTime(totalTimeDuration);
-            showProgressDialog(deltaX, seekTime, mSeekTimePosition, totalTime, totalTimeDuration);
+            if (!closeSeek) {
+                int totalTimeDuration = getDuration();
+                mSeekTimePosition = (int) (mDownPosition + (deltaX * totalTimeDuration / curWidth) / mSeekRatio);
+                if (mSeekTimePosition > totalTimeDuration)
+                    mSeekTimePosition = totalTimeDuration;
+                String seekTime = CommonUtil.stringForTime(mSeekTimePosition);
+                String totalTime = CommonUtil.stringForTime(totalTimeDuration);
+                showProgressDialog(deltaX, seekTime, mSeekTimePosition, totalTime, totalTimeDuration);
+            }
         } else if (mChangeVolume) {
             deltaY = -deltaY;
             int max = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
@@ -704,11 +712,11 @@ public abstract class GSYVideoControlView extends GSYVideoView implements View.O
 
             showVolumeDialog(-deltaY, volumePercent);
         } else if (mBrightness) {
-            if (Math.abs(deltaY) > mThreshold) {
+//            if (Math.abs(deltaY) > mThreshold) {
                 float percent = (-deltaY / curHeight);
                 onBrightnessSlide(percent);
                 mDownY = y;
-            }
+//            }
         }
     }
 
@@ -747,10 +755,12 @@ public abstract class GSYVideoControlView extends GSYVideoView implements View.O
 
     protected void touchSurfaceUp() {
         if (mChangePosition) {
-            int duration = getDuration();
-            int progress = mSeekTimePosition * 100 / (duration == 0 ? 1 : duration);
-            if (mBottomProgressBar != null)
-                mBottomProgressBar.setProgress(progress);
+            if (!closeSeek) {
+                int duration = getDuration();
+                int progress = mSeekTimePosition * 100 / (duration == 0 ? 1 : duration);
+                if (mBottomProgressBar != null)
+                    mBottomProgressBar.setProgress(progress);
+            }
         }
 
         mTouchingProgressBar = false;
@@ -758,19 +768,21 @@ public abstract class GSYVideoControlView extends GSYVideoView implements View.O
         dismissVolumeDialog();
         dismissBrightnessDialog();
         if (mChangePosition && getGSYVideoManager() != null && (mCurrentState == CURRENT_STATE_PLAYING || mCurrentState == CURRENT_STATE_PAUSE)) {
-            try {
-                getGSYVideoManager().seekTo(mSeekTimePosition);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            int duration = getDuration();
-            int progress = mSeekTimePosition * 100 / (duration == 0 ? 1 : duration);
-            if (mProgressBar != null) {
-                mProgressBar.setProgress(progress);
-            }
-            if (mVideoAllCallBack != null && isCurrentMediaListener()) {
-                Debuger.printfLog("onTouchScreenSeekPosition");
-                mVideoAllCallBack.onTouchScreenSeekPosition(mOriginUrl, mTitle, this);
+            if (!closeSeek) {
+                try {
+                    getGSYVideoManager().seekTo(mSeekTimePosition);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                int duration = getDuration();
+                int progress = mSeekTimePosition * 100 / (duration == 0 ? 1 : duration);
+                if (mProgressBar != null) {
+                    mProgressBar.setProgress(progress);
+                }
+                if (mVideoAllCallBack != null && isCurrentMediaListener()) {
+                    Debuger.printfLog("onTouchScreenSeekPosition");
+                    mVideoAllCallBack.onTouchScreenSeekPosition(mOriginUrl, mTitle, this);
+                }
             }
         } else if (mBrightness) {
             if (mVideoAllCallBack != null && isCurrentMediaListener()) {

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -82,12 +83,12 @@ public class BrowseAdapter extends RecyclerView.Adapter<BrowseAdapter.RecyclerHo
     class RecyclerHolder extends RecyclerView.ViewHolder {
 
         TextView name;
-        LinearLayout item;
+        RelativeLayout item;
 
         private RecyclerHolder(View itemView) {
             super(itemView);
             name = (TextView) itemView.findViewById(R.id.name);
-            item = (LinearLayout) itemView.findViewById(R.id.item);
+            item = (RelativeLayout) itemView.findViewById(R.id.item);
         }
 
     }

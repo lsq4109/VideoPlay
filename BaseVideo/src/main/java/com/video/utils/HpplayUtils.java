@@ -1,9 +1,15 @@
 package com.video.utils;
 
+import android.animation.StateListAnimator;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
@@ -13,7 +19,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -32,24 +42,36 @@ import com.hpplay.sdk.source.browse.api.IAPI;
 import com.hpplay.sdk.source.browse.api.IBrowseListener;
 import com.hpplay.sdk.source.browse.api.LelinkServiceInfo;
 import com.huoyan.basevideo.R;
+import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.CommonUtil;
 import com.video.adapter.BrowseAdapter;
 import com.video.view.BaseVideoPlayer;
 import com.video.view.RemoteControlMenu;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
-public class HpplayUtils implements View.OnClickListener {
+import tv.danmaku.ijk.media.player.IjkMediaPlayer;
+
+import static android.content.Context.WIFI_SERVICE;
+
+public class HpplayUtils {
     private Context mContext;
     private BaseVideoPlayer baseVideoPlayer;
+    private NetworkInfo networkInfo;
     private static final String TAG = "hputils";
-    private static final String APP_ID = "15450";
-    private static final String APP_SECRET = "aed4986840ce3b9669d945a0b24091b7";
+    //火眼
+//        private static final String APP_ID = "15450";
+//        private static final String APP_SECRET = "aed4986840ce3b9669d945a0b24091b7";
+    //资料馆
+    private static final String APP_ID = "15464";
+    private static final String APP_SECRET = "a35047670aaaae15b87140e188fa3316";
     private static final int MSG_SEARCH_RESULT = 100;
     private static final int MSG_CONNECT_FAILURE = 101;
     private static final int MSG_CONNECT_SUCCESS = 102;
     private static final int MSG_UPDATE_PROGRESS = 103;
+    private static final int MSG_SEARCH_STOP = 105;
     private boolean isplay=false;
     private boolean loadingSucess=false;
 
@@ -57,25 +79,40 @@ public class HpplayUtils implements View.OnClickListener {
     private UIHandler mUiHandler;
     private Dialog mDeviceDialog;
     private BrowseAdapter mBrowseAdapter;
-    private TextView tip;
+    private TextView network;
+    private TextView statue;
+    private TextView null_back;
     private RecyclerView deviceRecy;
+    private LinearLayout setting;
+    private LinearLayout bottom;
+
 
     private Dialog controlDialog;
 
 
     private SeekBar mProgressBar;
     private ImageView play;
+    private ImageView refresh;
     private TextView current;
     private TextView total;
     private int dupro=0;
     private int seekto=0;
 
 
+    private boolean isSelectClient = false;
+    private boolean adapterClick = false;
+
+
+
 
     public HpplayUtils(Activity context, BaseVideoPlayer baseVideoPlayer) {
         mContext = context;
         this.baseVideoPlayer = baseVideoPlayer;
-        initHpSdk();
+        try {
+            initHpSdk();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         mUiHandler = new UIHandler(context);
     }
     public void initHpSdk(){
@@ -83,13 +120,13 @@ public class HpplayUtils implements View.OnClickListener {
         LelinkSourceSDK.getInstance().bindSdk(mContext.getApplicationContext(), APP_ID, APP_SECRET, new IBindSdkListener() {
             @Override
             public void onBindCallback(boolean b) {
+                LelinkSourceSDK.getInstance().setDebugMode(true);
                 LeLog.i("onBindCallback", "--------->" + b);
                 if (b) {
                     LelinkSourceSDK.getInstance().setBrowseResultListener(iBrowseListener);
                     LelinkSourceSDK.getInstance().setConnectListener(iConnectListener);
                     LelinkSourceSDK.getInstance().setPlayListener(lelinkPlayerListener);
                 }
-                LelinkSourceSDK.getInstance().setDebugMode(true);
             }
         });
     }
@@ -97,17 +134,33 @@ public class HpplayUtils implements View.OnClickListener {
 
         @Override
         public void onBrowse(int i, List<LelinkServiceInfo> list) {
-            if (i == IBrowseListener.BROWSE_ERROR_AUTH) {
-                mUiHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(mContext, "授权失败", Toast.LENGTH_SHORT).show();
+            LeLog.i("-------------->list size :", i+"------" + list);
+
+            switch (i){
+                case IBrowseListener.BROWSE_ERROR_AUTH:
+                    mUiHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(mContext, "授权失败", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    break;
+                case IBrowseListener.BROWSE_SUCCESS:
+                    if (mUiHandler != null) {
+                        mUiHandler.sendMessage(Message.obtain(null, MSG_SEARCH_RESULT, list));
                     }
-                });
-                return;
-            }
-            if (mUiHandler != null) {
-                mUiHandler.sendMessage(Message.obtain(null, MSG_SEARCH_RESULT, list));
+                    break;
+//                case IBrowseListener.BROWSE_STOP:
+//                    if (mUiHandler != null) {
+//                        mUiHandler.sendMessage(Message.obtain(null, MSG_SEARCH_STOP, list));
+//                    }
+//                    break;
+                case IBrowseListener.BROWSE_TIMEOUT:
+                    if (mUiHandler != null) {
+                        mUiHandler.sendMessage(Message.obtain(null, MSG_SEARCH_STOP, list));
+                    }
+                    break;
+
             }
         }
 
@@ -155,7 +208,7 @@ public class HpplayUtils implements View.OnClickListener {
 
         @Override
         public void onLoading() {
-            loadingSucess = true;
+            //            loadingSucess = true;
             isplay = false;
             mUiHandler.post(new Runnable() {
                 @Override
@@ -174,10 +227,12 @@ public class HpplayUtils implements View.OnClickListener {
                 @Override
                 public void run() {
                     play.setImageResource(R.drawable.video_play);
-                    LelinkSourceSDK.getInstance().seekTo(seekto);
+                    if (seekto!=0){
+                        LelinkSourceSDK.getInstance().seekTo(seekto);
+                        seekto = 0;
+                    }
                 }
             });
-
         }
 
         @Override
@@ -193,12 +248,13 @@ public class HpplayUtils implements View.OnClickListener {
         }
 
         @Override
-        public void onCompletion() {
+        public void onCompletion() {//播放完成
             isplay = false;
             mUiHandler.post(new Runnable() {
                 @Override
                 public void run() {
                     play.setImageResource(R.drawable.video_stop);
+                    controlDialog.dismiss();
                 }
             });
         }
@@ -216,15 +272,11 @@ public class HpplayUtils implements View.OnClickListener {
         }
 
         @Override
-        public void onSeekComplete(int i) {
-
-        }
-
+        public void onSeekComplete(int i) {}
         @Override
-        public void onInfo(int i, int i1) {
-
-        }
-
+        public void onInfo(int i, int i1) {}
+        @Override
+        public void onInfo(int i, String s) {}
         String text = null;
 
         @Override
@@ -308,12 +360,8 @@ public class HpplayUtils implements View.OnClickListener {
             }
 
         }
-
         @Override
-        public void onVolumeChanged(float v) {
-
-        }
-
+        public void onVolumeChanged(float v) {}
         @Override
         public void onPositionUpdate(long l, long l1) {
             if (mUiHandler != null) {
@@ -325,29 +373,6 @@ public class HpplayUtils implements View.OnClickListener {
             }
         }
     };
-
-    @Override
-    public void onClick(View v) {
-        if (loadingSucess) {
-            int id = v.getId();
-            if (id == R.id.left) {
-                int i = dupro - 15;
-                LelinkSourceSDK.getInstance().seekTo(i < 0 ? 0 : i);
-            } else if (id == R.id.right) {
-                LelinkSourceSDK.getInstance().seekTo(dupro + 15);
-            } else if (id == R.id.play) {
-                if (isplay) {
-                    LelinkSourceSDK.getInstance().pause();
-                } else {
-                    LelinkSourceSDK.getInstance().resume();
-                }
-            } else if (id == R.id.top) {
-                LelinkSourceSDK.getInstance().addVolume();
-            } else if (id == R.id.bottom) {
-                LelinkSourceSDK.getInstance().subVolume();
-            }
-        }
-    }
 
     private class UIHandler extends Handler {
 
@@ -367,11 +392,34 @@ public class HpplayUtils implements View.OnClickListener {
                 case MSG_SEARCH_RESULT:
                     try {
                         if (msg.obj != null) {
-                            tip.setText("搜索完成");
-                            mBrowseAdapter.updateDatas((List<LelinkServiceInfo>) msg.obj);
+                            List<LelinkServiceInfo> obj = (List<LelinkServiceInfo>) msg.obj;
+                            if (obj.size()>0){
+                                deviceRecy.setVisibility(View.VISIBLE);
+                                null_back.setVisibility(View.GONE);
+                                bottom.setVisibility(View.GONE);
+                                mBrowseAdapter.updateDatas(obj);
+                            }else {
+                                deviceRecy.setVisibility(View.GONE);
+                                null_back.setVisibility(View.VISIBLE);
+                                bottom.setVisibility(View.VISIBLE);
+                            }
+                            //                            refresh.clearAnimation();
                         }
                     } catch (Exception e) {
                         LeLog.w(TAG, e);
+                    }
+                    break;
+                case MSG_SEARCH_STOP:
+                    List<LelinkServiceInfo> obj = (List<LelinkServiceInfo>) msg.obj;
+                    if (obj.size()>0){
+                        deviceRecy.setVisibility(View.VISIBLE);
+                        null_back.setVisibility(View.GONE);
+                        bottom.setVisibility(View.GONE);
+                        mBrowseAdapter.updateDatas(obj);
+                    }else {
+                        deviceRecy.setVisibility(View.GONE);
+                        null_back.setVisibility(View.VISIBLE);
+                        bottom.setVisibility(View.VISIBLE);
                     }
                     break;
                 case MSG_CONNECT_SUCCESS:
@@ -381,17 +429,17 @@ public class HpplayUtils implements View.OnClickListener {
                             String type = msg.arg1 == IConnectListener.TYPE_LELINK ? "Lelink"
                                     : msg.arg1 == IConnectListener.TYPE_DLNA ? "DLNA"
                                     : msg.arg1 == IConnectListener.TYPE_NEW_LELINK ? "NEW_LELINK" : "IM";
-                            Toast.makeText(mainActivity,  serviceInfo.getName() + "连接成功", Toast.LENGTH_SHORT).show();
                             //开始播放
+                            isSelectClient = true;
                             mDeviceDialog.dismiss();
                             playVideo(serviceInfo);
-                            showControlDialog(serviceInfo.getName());
                         }
                     } catch (Exception e) {
                         LeLog.w(TAG, e);
                     }
                     break;
                 case MSG_CONNECT_FAILURE:
+                    adapterClick = false;
                     if (msg.obj != null) {
                         Toast.makeText(mainActivity, msg.obj.toString(), Toast.LENGTH_SHORT).show();
                     }
@@ -412,12 +460,28 @@ public class HpplayUtils implements View.OnClickListener {
     }
 
     private void playVideo(LelinkServiceInfo mSelectInfo){
+        String url = "";
+        //获取随机code
+        IjkMediaPlayer ijkMediaPlayer = baseVideoPlayer.getIjkMediaPlayer();
+        long code = ijkMediaPlayer._getPropertyLong(20212, 0);
+        if (code!=0){
+            url = getLocalUrl(mContext,baseVideoPlayer.playurl);
+            if (url==null){
+                return;
+            }
+        }else {
+            url = baseVideoPlayer.playurl;
+        }
+        System.out.println(url+"-----------------------");
+        Toast.makeText(mContext,  mSelectInfo.getName() + "连接成功", Toast.LENGTH_SHORT).show();
         LelinkPlayerInfo lelinkPlayerInfo = new LelinkPlayerInfo();
-//        lelinkPlayerInfo.setUrl("http://39.97.243.76/m3u8enc_t/EE722E4DD669BA18696440BE98DD09E4_1.m3u8");
-        lelinkPlayerInfo.setUrl("http://211.148.220.133/cntv/media/new/2013/icntv2/media/newmedia/1.8M/2020/01/02/666291890.m3u8");
+        lelinkPlayerInfo.setUrl(url);
         lelinkPlayerInfo.setType(LelinkSourceSDK.MEDIA_TYPE_VIDEO);
         lelinkPlayerInfo.setLelinkServiceInfo(mSelectInfo);
         LelinkSourceSDK.getInstance().startPlayMedia(lelinkPlayerInfo);
+        //展示弹框
+        showControlDialog(mSelectInfo.getName());
+        adapterClick = false;
     }
     /**
      * 控制界面
@@ -425,7 +489,7 @@ public class HpplayUtils implements View.OnClickListener {
      */
     private void showControlDialog(String dname) {
         View localView = LayoutInflater.from(mContext).inflate(R.layout.controleview, null);
-        controlDialog = new Dialog(mContext, R.style.video_style_dialog_progress);
+        controlDialog = new Dialog(mContext, R.style.hpplay_style_dialog_progress);
         controlDialog.setContentView(localView);
         WindowManager.LayoutParams localLayoutParams = controlDialog.getWindow().getAttributes();
         localLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -444,11 +508,37 @@ public class HpplayUtils implements View.OnClickListener {
                 LelinkSourceSDK.getInstance().stopPlay();
             }
         });
-        localView.findViewById(R.id.left).setOnClickListener(this);
-        localView.findViewById(R.id.right).setOnClickListener(this);
-        localView.findViewById(R.id.top).setOnClickListener(this);
-        localView.findViewById(R.id.bottom).setOnClickListener(this);
-        localView.findViewById(R.id.play).setOnClickListener(this);
+        RemoteControlMenu remoteControlMenu= localView.findViewById(R.id.controller_view);
+        remoteControlMenu.setListener(new RemoteControlMenu.MenuListener() {
+            @Override
+            public void onMenuClicked(int type) {
+                switch (type){
+                    case RemoteControlMenu.TouchArea.CENTER:
+                        if (isplay) {
+                            LelinkSourceSDK.getInstance().pause();
+                        } else {
+                            LelinkSourceSDK.getInstance().resume();
+                        }
+                        break;
+                    case RemoteControlMenu.TouchArea.TOP:
+                        LelinkSourceSDK.getInstance().addVolume();
+                        break;
+                    case RemoteControlMenu.TouchArea.BOTTOM:
+                        LelinkSourceSDK.getInstance().subVolume();
+                        break;
+                    case RemoteControlMenu.TouchArea.LEFT:
+                        dupro -= 15;
+                        LelinkSourceSDK.getInstance().seekTo(dupro < 0 ? 0 : dupro);
+                        break;
+                    case RemoteControlMenu.TouchArea.RIGHT:
+                        dupro+=15;
+                        LelinkSourceSDK.getInstance().seekTo(dupro);
+                        break;
+                }
+
+            }
+        });
+
         mProgressBar= localView.findViewById(R.id.progress);
         play = localView.findViewById(R.id.play);
         mProgressBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -467,7 +557,17 @@ public class HpplayUtils implements View.OnClickListener {
 
         videoname.setText(baseVideoPlayer.getTitleTextView().getText().toString());
         devicename.setText(dname);
-
+        // 显示监听
+        controlDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                //                baseVideoPlayer.onResume();
+                //关闭弹框，停止投屏，同步进度
+                LelinkSourceSDK.getInstance().stopPlay();
+                baseVideoPlayer.setSeekOnStart(dupro*1000);
+                baseVideoPlayer.startPlayLogic();
+            }
+        });
 
         if (!controlDialog.isShowing()) {
             controlDialog.show();
@@ -482,7 +582,7 @@ public class HpplayUtils implements View.OnClickListener {
         LelinkSourceSDK.getInstance().startBrowse();
         if (mDeviceDialog == null) {
             View localView = LayoutInflater.from(mContext).inflate(R.layout.video_hpplay_dialog, null);
-            mDeviceDialog = new Dialog(mContext, R.style.video_style_dialog_progress);
+            mDeviceDialog = new Dialog(mContext, R.style.hpplay_style_dialog_progress);
             mDeviceDialog.setContentView(localView);
 
             WindowManager.LayoutParams localLayoutParams = mDeviceDialog.getWindow().getAttributes();
@@ -490,15 +590,23 @@ public class HpplayUtils implements View.OnClickListener {
             localLayoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
             mDeviceDialog.getWindow().setAttributes(localLayoutParams);
 
-            tip = localView.findViewById(R.id.tip);
+            statue = localView.findViewById(R.id.statue);
+            network = localView.findViewById(R.id.network);
+            setting = localView.findViewById(R.id.setting);
+            null_back = localView.findViewById(R.id.null_back);
             deviceRecy = localView.findViewById(R.id.device);
+            refresh = localView.findViewById(R.id.refresh);
+            bottom = localView.findViewById(R.id.bottom);
+
             deviceRecy.setLayoutManager(new LinearLayoutManager(mContext));
             mBrowseAdapter = new BrowseAdapter(mContext);
             deviceRecy.setAdapter(mBrowseAdapter);
-            localView.findViewById(R.id.refresh).setOnClickListener(new View.OnClickListener() {
+            refresh.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    tip.setText("搜索设备中");
+                    //开始搜索动画
+                    startAnimation();
+                    //搜索设备
                     LelinkSourceSDK.getInstance().startBrowse();
                 }
             });
@@ -506,26 +614,100 @@ public class HpplayUtils implements View.OnClickListener {
                 @Override
                 public void onClick(View v) {
                     mDeviceDialog.dismiss();
-                    baseVideoPlayer.onResume();
                 }
             });
             mBrowseAdapter.setOnItemClickListener(new BrowseAdapter.OnItemClickListener() {
                 @Override
                 public void onClick(int position, LelinkServiceInfo pInfo) {
+                    if (adapterClick) {//已经选择设备了
+                        Toast.makeText(mContext,"您已选择投屏设备，请稍后",Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    adapterClick = true;
                     LelinkSourceSDK.getInstance().connect(pInfo);
+                }
+            });
+            setting.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS);
+                    mContext.startActivity(intent);
                 }
             });
         }
         if (!mDeviceDialog.isShowing()) {
             mDeviceDialog.show();
+            //开始搜索动画
+            startAnimation();
         }
         mDeviceDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
+                if (!isSelectClient) {
+                    baseVideoPlayer.onResume();
+                }
+                isSelectClient = false;
                 LelinkSourceSDK.getInstance().stopBrowse();
             }
         });
     }
+
+    /**
+     * 开始搜索动画
+     */
+    private void startAnimation() {
+        //初始化网络连接
+        networkInfo = ((ConnectivityManager) mContext
+                .getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+        if (networkInfo!=null) {
+            if (networkInfo.isConnected() && networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+                //wifi连接
+                statue.setText("搜索可投屏设备");
+                network.setText("当前Wi-Fi："+IpGetUtil.getWifiName(mContext));
+                setting.setVisibility(View.GONE);
+                deviceRecy.setVisibility(View.GONE);
+                null_back.setVisibility(View.GONE);
+                bottom.setVisibility(View.GONE);
+                //创建旋转动画
+                RotateAnimation rotate = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                rotate.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {}
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        if (mUiHandler != null) {
+                            mUiHandler.sendMessage(Message.obtain(null, MSG_SEARCH_STOP, new ArrayList<>()));
+                        }
+                    }
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {}
+                });
+
+                LinearInterpolator lin = new LinearInterpolator();
+                rotate.setInterpolator(lin);
+                rotate.setDuration(1000);//设置动画持续周期
+                rotate.setRepeatCount(10);//设置重复次数
+                rotate.setFillAfter(true);//动画执行完后是否停留在执行完的状态
+                rotate.setStartOffset(10);//执行前的等待时间
+                refresh.startAnimation(rotate);//开始动画
+            } else {
+                statue.setText("未连接Wi-Fi，");
+                network.setText("当前是移动数据网络");
+                setting.setVisibility(View.VISIBLE);
+                deviceRecy.setVisibility(View.GONE);
+                null_back.setVisibility(View.GONE);
+                bottom.setVisibility(View.VISIBLE);
+            }
+        }else {
+            statue.setText("未连接Wi-Fi，");
+            network.setText("当前无可用网络");
+            setting.setVisibility(View.VISIBLE);
+            deviceRecy.setVisibility(View.GONE);
+            null_back.setVisibility(View.GONE);
+            bottom.setVisibility(View.VISIBLE);
+        }
+    }
+
     /**
      * 隐藏设备dialog
      */
@@ -539,10 +721,33 @@ public class HpplayUtils implements View.OnClickListener {
         return controlDialog;
     }
 
+    public Dialog getDeviceDialog() {
+        return mDeviceDialog;
+    }
+
     /**
      * 快进到
      */
     public void seekTo(int seekto){
+        System.out.println("------投屏-----"+seekto);
         this.seekto = seekto;
+    }
+
+    /**
+     * 获取ip地址
+     * @param context
+     * @return
+     */
+    private String getLocalUrl(Context context,String url) {
+        String ht="";
+        String domain="";
+        String ip=IpGetUtil.getIPAddress(context);
+        if (ip==null){
+            return null;
+        }
+        ht = url.split("//")[0];
+        domain = url.split("//")[1].split("/")[0];
+        //返回播放地址
+        return url.replace(ht + "//" + domain, "http://" + ip + ":10024");
     }
 }
