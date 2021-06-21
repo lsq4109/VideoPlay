@@ -37,13 +37,13 @@ android {
 }
 
 dependencies {
-//    implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation fileTree(dir: "libs", include: ["*.jar","*.aar"])
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+//    implementation fileTree(dir: "libs", include: ["*.jar","*.aar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.annotation:annotation:1.1.0'
 
-    implementation files ('libs/lecast.aar')
-//    compileOnly files('libs/lecast.aar')
+//    implementation files ('libs/lecast.aar')
+    compileOnly files('libs/lecast.aar')
 
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.andkulikov:transitionseverywhere:2.0.0-beta01'
