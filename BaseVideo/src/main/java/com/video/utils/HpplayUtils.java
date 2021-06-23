@@ -75,6 +75,8 @@ public class HpplayUtils {
     private boolean isplay=false;
     private boolean loadingSucess=false;
 
+    private List<LelinkServiceInfo> mLelinkServiceInfoList;
+
 
     private UIHandler mUiHandler;
     private Dialog mDeviceDialog;
@@ -135,7 +137,7 @@ public class HpplayUtils {
         @Override
         public void onBrowse(int i, List<LelinkServiceInfo> list) {
             LeLog.i("-------------->list size :", i+"------" + list);
-
+            mLelinkServiceInfoList = list;
             switch (i){
                 case IBrowseListener.BROWSE_ERROR_AUTH:
                     mUiHandler.post(new Runnable() {
@@ -676,7 +678,7 @@ public class HpplayUtils {
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         if (mUiHandler != null) {
-                            mUiHandler.sendMessage(Message.obtain(null, MSG_SEARCH_STOP, new ArrayList<>()));
+                            mUiHandler.sendMessage(Message.obtain(null, MSG_SEARCH_RESULT, mLelinkServiceInfoList));
                         }
                     }
                     @Override

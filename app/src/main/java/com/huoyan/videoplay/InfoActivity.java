@@ -22,9 +22,9 @@ import java.util.List;
 public class InfoActivity extends AppCompatActivity {
     private BaseVideoPlayer detailPlayer;
     //        private String url = "http://video-cdn.fe.huoyanvideo.com/video/TRANS0001/儿女亲事1950/儿女亲事1950.m3u8?MtsHlsUriToken=aHR0cHM6Ly9odW95YW52aWRlby5jb20=";
-    //        private String url = "http://39.97.243.76/m3u8enc_t/EE722E4DD669BA18696440BE98DD09E4_2.m3u8";
+//            private String url = "http://39.97.243.76/m3u8enc_t/EE722E4DD669BA18696440BE98DD09E4_1.m3u8";
     private String url1 = "http://meng.wuyou-zuida.com/20191126/22806_073554e7/index.m3u8";
-    private String url = "http://video-cdn.fe.huoyanvideo.com/video/TRANS0001/B9283E340D5F3E77F02585F0EB89077E/B9283E340D5F3E77F02585F0EB89077E%e4%b8%ad%e6%96%87.m3u8?MtsHlsUriToken=aHR0cHM6Ly9odW95YW52aWRlby5jb20=";
+    private String url = "http://video-cdn.fe.huoyanvideo.com/video/TRANS0001/DuShiLiDeCunZhuang-FNgwHbggQLlGlP/DuShiLiDeCunZhuang-FNgwHbggQLlGlP.m3u8?MtsHlsUriToken=aHR0cHM6Ly9odW95YW52aWRlby5jb20=";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
