@@ -211,6 +211,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer {
                 if (!res.resolutionName.equals(BaseVideoPlayer.this.resolution.getText().toString())) {
                     BaseVideoPlayer.this.resolution.setText(res.resolutionName);
                     long currentPosition = BaseVideoPlayer.this.getGSYVideoManager().getCurrentPosition();
+                    BaseVideoPlayer.this.playurl = res.url;
                     BaseVideoPlayer.this.setUp(res.url, BaseVideoPlayer.this.isCache, BaseVideoPlayer.this.mTitle);
                     BaseVideoPlayer.this.setSeekOnStart(currentPosition);
                     BaseVideoPlayer.this.startPlayLogic();

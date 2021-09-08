@@ -770,7 +770,7 @@ public abstract class GSYVideoControlView extends GSYVideoView implements View.O
         if (mChangePosition && getGSYVideoManager() != null && (mCurrentState == CURRENT_STATE_PLAYING || mCurrentState == CURRENT_STATE_PAUSE)) {
             if (!closeSeek) {
                 try {
-                    getGSYVideoManager().seekTo(mSeekTimePosition);
+                    getGSYVideoManager().seekTo(mSeekTimePosition>0?mSeekTimePosition:0);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

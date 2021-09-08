@@ -474,7 +474,6 @@ public class HpplayUtils {
         }else {
             url = baseVideoPlayer.playurl;
         }
-        System.out.println(url+"-----------------------");
         Toast.makeText(mContext,  mSelectInfo.getName() + "连接成功", Toast.LENGTH_SHORT).show();
         LelinkPlayerInfo lelinkPlayerInfo = new LelinkPlayerInfo();
         lelinkPlayerInfo.setUrl(url);

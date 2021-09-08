@@ -158,10 +158,10 @@ public class InfoActivity extends AppCompatActivity {
 //        detailPlayer.playVideo(url,"Title",true);
         //清晰度切换
                 List<ResolutionModel> list = new ArrayList<>();
-                list.add(new ResolutionModel("1080P","蓝光",url));
-                list.add(new ResolutionModel("720P","超清",url));
-                list.add(new ResolutionModel("540P","高清",url));
-                list.add(new ResolutionModel("320P","标清",url));
+//                list.add(new ResolutionModel("1080P","蓝光",url));
+//                list.add(new ResolutionModel("720P","超清",url));
+                list.add(new ResolutionModel("540P","高清","http://video-cdn.fe.huoyanvideo.com/video/TRANS0001/XiaoBingZhangGa-LcqrPsJCNIsfAt/XiaoBingZhangGa-LcqrPsJCNIsfAt.m3u8?MtsHlsUriToken=aHR0cHM6Ly9odW95YW52aWRlby5jb20="));
+                list.add(new ResolutionModel("320P","标清","http://video-cdn.fe.huoyanvideo.com/video/TRANS0001/XiaoBingZhangGa-NHYpCeztiWWkqt/XiaoBingZhangGa-NHYpCeztiWWkqt.m3u8?MtsHlsUriToken=aHR0cHM6Ly9odW95YW52aWRlby5jb20="));
                 detailPlayer.playVideo(list,"Title",true);
 
     }
