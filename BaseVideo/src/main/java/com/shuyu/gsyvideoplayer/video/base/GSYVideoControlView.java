@@ -762,7 +762,8 @@ public abstract class GSYVideoControlView extends GSYVideoView implements View.O
                     mBottomProgressBar.setProgress(progress);
             }
         }
-
+        System.out.println("<<>>getDuration>>"+getDuration());
+        System.out.println("<<>>mSeekTimePosition>>"+mSeekTimePosition);
         mTouchingProgressBar = false;
         dismissProgressDialog();
         dismissVolumeDialog();
@@ -770,7 +771,7 @@ public abstract class GSYVideoControlView extends GSYVideoView implements View.O
         if (mChangePosition && getGSYVideoManager() != null && (mCurrentState == CURRENT_STATE_PLAYING || mCurrentState == CURRENT_STATE_PAUSE)) {
             if (!closeSeek) {
                 try {
-                    getGSYVideoManager().seekTo(mSeekTimePosition>0?mSeekTimePosition:0);
+                    getGSYVideoManager().seekTo(mSeekTimePosition>0?mSeekTimePosition>=getDuration()?getDuration()-1:mSeekTimePosition:0);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
