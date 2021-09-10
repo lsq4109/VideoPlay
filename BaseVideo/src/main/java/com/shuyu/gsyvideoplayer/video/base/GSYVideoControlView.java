@@ -609,10 +609,12 @@ public abstract class GSYVideoControlView extends GSYVideoView implements View.O
         if (getGSYVideoManager() != null && mHadPlay) {
             try {
                 int time = seekBar.getProgress() * getDuration() / 100;
-                getGSYVideoManager().seekTo(time);
+                getGSYVideoManager().seekTo(time<0?0:time>=getDuration()?getDuration():time);
+                System.out.println("<<>>"+time);
             } catch (Exception e) {
                 Debuger.printfWarning(e.toString());
             }
+
         }
         mHadSeekTouch = false;
     }
