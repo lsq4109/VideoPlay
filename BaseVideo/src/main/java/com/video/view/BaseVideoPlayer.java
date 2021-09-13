@@ -76,7 +76,7 @@ import java.util.List;
 
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
-public class BaseVideoPlayer extends StandardGSYVideoPlayer {
+public class BaseVideoPlayer extends StandardGSYVideoPlayer{
     private Activity mActivity;
     private GSYVideoOptionBuilder gsyVideoOptionBuilder;
     private OrientationUtils orientationUtils;
@@ -235,7 +235,8 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer {
         this.tryPlay.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                tryPlay.setVisibility(GONE);
+                BaseVideoPlayer.this.tryPlay.setVisibility(GONE);
+                startPlayLogic();
                 if (mTryPlayListener!=null){
                     mTryPlayListener.TryPlay(v);
                 }
@@ -406,6 +407,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer {
         });
     }
 
+
     @Override
     protected void setProgressAndTime(int progress, int secProgress, int currentTime, int totalTime, boolean forceChange) {
         super.setProgressAndTime(progress, secProgress, currentTime, totalTime, forceChange);
@@ -479,7 +481,8 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer {
     private void initSetting() {
         this.orientationUtils = new OrientationUtils(this.mActivity, this);
         this.orientationUtils.setEnable(false);
-        this.gsyVideoOptionBuilder = (new GSYVideoOptionBuilder()).setIsTouchWiget(true).setRotateViewAuto(false).setLockLand(false).setShowFullAnimation(false).setNeedLockFull(true).setSeekRatio(1.0F).setDismissControlTime(6000).setCacheWithPlay(true).setVideoAllCallBack(new GSYSampleCallBack() {
+
+        mVideoAllCallBack = new GSYSampleCallBack() {
             public void onPrepared(String url, Object... objects) {
                 super.onPrepared(url, objects);
                 BaseVideoPlayer.this.orientationUtils.setEnable(true);
@@ -492,7 +495,17 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer {
                     BaseVideoPlayer.this.orientationUtils.backToProtVideo();
                 }
             }
-        });
+        };
+        this.gsyVideoOptionBuilder = (new GSYVideoOptionBuilder())
+                .setIsTouchWiget(true)
+                .setRotateViewAuto(false)
+                .setLockLand(false)
+                .setShowFullAnimation(false)
+                .setNeedLockFull(true)
+                .setSeekRatio(1.0F)
+                .setDismissControlTime(6000)
+                .setCacheWithPlay(true)
+                .setVideoAllCallBack(mVideoAllCallBack);
         this.gsyVideoOptionBuilder.build(this);
         this.mFullscreenButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
@@ -650,6 +663,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer {
         landLayoutVideo.showMore = this.showMore;
         landLayoutVideo.showAirplay = this.showAirplay;
         landLayoutVideo.showNextVideo = this.showNextVideo;
+        landLayoutVideo.mTextureView =this.mTextureView;
 
 
 
@@ -716,6 +730,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer {
             this.showMore = landLayoutVideo.showMore;
             this.showAirplay = landLayoutVideo.showAirplay;
             this.showNextVideo = landLayoutVideo.showNextVideo;
+            this.mTextureView = landLayoutVideo.mTextureView;
 
             this.mShareListener = landLayoutVideo.mShareListener;
             this.speedText = landLayoutVideo.speed.getText().toString();
@@ -822,10 +837,8 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer {
     }
 
     public void onDestroy() {
-        //        if (this.isPlay) {
         GSYVideoManager.releaseAllVideos();
         this.getCurPlay().release();
-        //        }
 
         if (this.orientationUtils != null) {
             this.orientationUtils.releaseListener();

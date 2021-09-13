@@ -615,13 +615,11 @@ public abstract class GSYVideoControlView extends GSYVideoView implements View.O
                     setUp(mOriginUrl,mCache,mTitle);
                     startPlayLogic();
                 }else if (time>=getDuration()){
-                    releaseVideos();
+                    getGSYVideoManager().stop();
                     onAutoCompletion();
                 }else{
                     getGSYVideoManager().seekTo(time);
                 }
-//                getGSYVideoManager().seekTo(time);
-                System.out.println("<<>>"+time);
             } catch (Exception e) {
                 Debuger.printfWarning(e.toString());
             }
@@ -775,8 +773,6 @@ public abstract class GSYVideoControlView extends GSYVideoView implements View.O
                     mBottomProgressBar.setProgress(progress);
             }
         }
-        System.out.println("<<>>getDuration>>"+getDuration());
-        System.out.println("<<>>mSeekTimePosition>>"+mSeekTimePosition);
         mTouchingProgressBar = false;
         dismissProgressDialog();
         dismissVolumeDialog();
@@ -784,27 +780,33 @@ public abstract class GSYVideoControlView extends GSYVideoView implements View.O
         if (mChangePosition && getGSYVideoManager() != null && (mCurrentState == CURRENT_STATE_PLAYING || mCurrentState == CURRENT_STATE_PAUSE)) {
             if (!closeSeek) {
                 try {
+                    int progress=0;
                     if (mSeekTimePosition<=0){
                         releaseVideos();
                         setUp(mOriginUrl,mCache,mTitle);
                         startPlayLogic();
+                        progress=0;
                     }else if (mSeekTimePosition>=getDuration()){
-                        releaseVideos();
+                        getGSYVideoManager().stop();
                         onAutoCompletion();
+                        progress=0;
+                        mCurrentTimeTextView.setText(CommonUtil.stringForTime(0));
+                        System.out.println("<<>>getDuration>>"+getDuration());
                     }else{
                         getGSYVideoManager().seekTo(mSeekTimePosition);
+                        int duration = getDuration();
+                        progress = mSeekTimePosition * 100 / (duration == 0 ? 1 : duration);
+                    }
+                    System.out.println("<<>>mProgressBar>>"+progress);
+                    if (mProgressBar != null) {
+                        mProgressBar.setProgress(progress);
+                    }
+                    if (mVideoAllCallBack != null && isCurrentMediaListener()) {
+                        Debuger.printfLog("onTouchScreenSeekPosition");
+                        mVideoAllCallBack.onTouchScreenSeekPosition(mOriginUrl, mTitle, this);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                }
-                int duration = getDuration();
-                int progress = mSeekTimePosition * 100 / (duration == 0 ? 1 : duration);
-                if (mProgressBar != null) {
-                    mProgressBar.setProgress(progress);
-                }
-                if (mVideoAllCallBack != null && isCurrentMediaListener()) {
-                    Debuger.printfLog("onTouchScreenSeekPosition");
-                    mVideoAllCallBack.onTouchScreenSeekPosition(mOriginUrl, mTitle, this);
                 }
             }
         } else if (mBrightness) {
@@ -969,8 +971,6 @@ public abstract class GSYVideoControlView extends GSYVideoView implements View.O
     }
 
     protected void setProgressAndTime(int progress, int secProgress, int currentTime, int totalTime, boolean forceChange) {
-        System.out.println("<<>>currentTime"+currentTime);
-
         if (mGSYVideoProgressListener != null && mCurrentState == CURRENT_STATE_PLAYING) {
             mGSYVideoProgressListener.onProgress(progress, secProgress, currentTime, totalTime);
         }

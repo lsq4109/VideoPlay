@@ -91,9 +91,9 @@ public class InfoActivity extends AppCompatActivity {
                 if (type== GSYVideoView.CURRENT_STATE_AUTO_COMPLETE){//播放完成
                     Toast.makeText(getApplicationContext(),"播放完成",0).show();
                     //退出全屏
-//                    if (isFullscreen) {
-//                        detailPlayer.backNormal();
-//                    }
+                    if (isFullscreen) {
+                        detailPlayer.backNormal();
+                    }
                 }
             }
         });
@@ -102,7 +102,7 @@ public class InfoActivity extends AppCompatActivity {
             @Override
             public void TryPlay(View v) {
                 //播放视频
-                detailPlayer.startPlayLogic();
+//                detailPlayer.startPlayLogic();
             }
         });
         //试看结束回调
