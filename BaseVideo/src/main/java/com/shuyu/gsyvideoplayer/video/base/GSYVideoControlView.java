@@ -618,6 +618,10 @@ public abstract class GSYVideoControlView extends GSYVideoView implements View.O
                     getGSYVideoManager().stop();
                     onAutoCompletion();
                 }else{
+                    if (mCurrentState==CURRENT_STATE_AUTO_COMPLETE){
+                        setSeekOnStart(time);
+                        clickStartIcon();
+                    }
                     getGSYVideoManager().seekTo(time);
                 }
             } catch (Exception e) {

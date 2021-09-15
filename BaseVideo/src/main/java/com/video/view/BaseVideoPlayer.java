@@ -1,34 +1,19 @@
 package com.video.view;
 
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.os.Message;
-import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.view.WindowManager.LayoutParams;
-import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -37,17 +22,11 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.hpplay.common.utils.LeLog;
-import com.hpplay.sdk.source.api.IBindSdkListener;
-import com.hpplay.sdk.source.api.IConnectListener;
-import com.hpplay.sdk.source.api.ILelinkPlayerListener;
 import com.hpplay.sdk.source.api.LelinkSourceSDK;
-import com.hpplay.sdk.source.browse.api.IBrowseListener;
-import com.hpplay.sdk.source.browse.api.LelinkServiceInfo;
-import com.huoyan.basevideo.R;
 import com.huoyan.basevideo.R.drawable;
 import com.huoyan.basevideo.R.id;
 import com.huoyan.basevideo.R.layout;
@@ -56,15 +35,12 @@ import com.shuyu.gsyvideoplayer.builder.GSYVideoOptionBuilder;
 import com.shuyu.gsyvideoplayer.listener.GSYSampleCallBack;
 import com.shuyu.gsyvideoplayer.listener.GSYVideoShotListener;
 import com.shuyu.gsyvideoplayer.listener.LockClickListener;
-import com.shuyu.gsyvideoplayer.listener.VideoAllCallBack;
 import com.shuyu.gsyvideoplayer.utils.CommonUtil;
-import com.shuyu.gsyvideoplayer.utils.Debuger;
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 import com.shuyu.gsyvideoplayer.video.base.GSYBaseVideoPlayer;
 import com.shuyu.gsyvideoplayer.video.base.GSYVideoPlayer;
 import com.shuyu.gsyvideoplayer.video.base.GSYVideoView;
-import com.video.adapter.BrowseAdapter;
 import com.video.adapter.SpeedAndResolutionAdapter;
 import com.video.adapter.SpeedAndResolutionAdapter.SelectListener;
 import com.video.model.ResolutionModel;
@@ -76,7 +52,7 @@ import java.util.List;
 
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
-public class BaseVideoPlayer extends StandardGSYVideoPlayer{
+public class BaseVideoPlayer extends StandardGSYVideoPlayer {
     private Activity mActivity;
     private GSYVideoOptionBuilder gsyVideoOptionBuilder;
     private OrientationUtils orientationUtils;
@@ -105,7 +81,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
     private BaseVideoPlayer.TakeScreenListener mTakeScreenListener;
     private BaseVideoPlayer.ShareListener mShareListener;
     private BaseVideoPlayer.NextListener mNextListener;
-    public String playurl="";
+    public String playurl = "";
     private boolean changeResolution = false;
     private ResolutionModel nowResolution;
 
@@ -117,14 +93,14 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
     private boolean showTryPlayView = true;
 
     private HpplayUtils mHpplayUtils;
-    private boolean clickAirPlay =false;
+    private boolean clickAirPlay = false;
 
     //试看
     private LinearLayout tryWatchView;
     public TextView tryWatchTip;
     public TextView tryWatchPay;
     private boolean tryWatch = false;
-    private int tryWatchTime=0;
+    private int tryWatchTime = 0;
     private TryWatchListener tryWatchListenner;
 
     //播放进度
@@ -150,8 +126,6 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
     protected boolean closeDoubleClick = false;
 
 
-
-
     public BaseVideoPlayer(Context context, Boolean fullFlag) {
         super(context, fullFlag);
     }
@@ -170,23 +144,23 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
         this.tryPlay = (RelativeLayout) this.findViewById(id.try_play);
         this.repeatTextView = this.findViewById(id.repeatTextView);
         this.repeatImageView = this.findViewById(id.repeatImageView);
-        this.takeScreen = (ImageView)this.findViewById(id.take_screen);
-        this.bottom_start = (ImageView)this.findViewById(id.bottom_start);
-        this.more = (ImageView)this.findViewById(id.more);
-        this.airplay = (ImageView)this.findViewById(id.airplay);
-        this.volumLight = (LinearLayout)this.findViewById(id.volum_light);
-        this.time = (TextView)this.findViewById(id.time);
-        this.mBatterView = (com.video.view.MyBatterView)this.findViewById(id.batterView);
-        this.speed = (TextView)this.findViewById(id.speed);
-        this.share = (ImageView)this.findViewById(id.share);
-        this.nextVideo = (ImageView)this.findViewById(id.next_video);
-        this.resolution = (TextView)this.findViewById(id.resolution);
-        this.tryWatchTip = (TextView)this.findViewById(id.tryWatchTip);
-        this.tryWatchPay = (TextView)this.findViewById(id.tryWatchPay);
-        this.mLight = (SeekBar)this.findViewById(id.s_light);
-        this.mVloum = (SeekBar)this.findViewById(id.s_volum);
+        this.takeScreen = (ImageView) this.findViewById(id.take_screen);
+        this.bottom_start = (ImageView) this.findViewById(id.bottom_start);
+        this.more = (ImageView) this.findViewById(id.more);
+        this.airplay = (ImageView) this.findViewById(id.airplay);
+        this.volumLight = (LinearLayout) this.findViewById(id.volum_light);
+        this.time = (TextView) this.findViewById(id.time);
+        this.mBatterView = (com.video.view.MyBatterView) this.findViewById(id.batterView);
+        this.speed = (TextView) this.findViewById(id.speed);
+        this.share = (ImageView) this.findViewById(id.share);
+        this.nextVideo = (ImageView) this.findViewById(id.next_video);
+        this.resolution = (TextView) this.findViewById(id.resolution);
+        this.tryWatchTip = (TextView) this.findViewById(id.tryWatchTip);
+        this.tryWatchPay = (TextView) this.findViewById(id.tryWatchPay);
+        this.mLight = (SeekBar) this.findViewById(id.s_light);
+        this.mVloum = (SeekBar) this.findViewById(id.s_volum);
         this.tryWatchView = (LinearLayout) this.findViewById(id.try_watch);
-        this.selecRecycleView = (RecyclerView)this.findViewById(id.select_recycle);
+        this.selecRecycleView = (RecyclerView) this.findViewById(id.select_recycle);
         this.selecRecycleView.setLayoutManager(new LinearLayoutManager(context));
         this.mSpeedAndResolutionAdapter = new SpeedAndResolutionAdapter(context);
         this.selecRecycleView.setAdapter(this.mSpeedAndResolutionAdapter);
@@ -197,7 +171,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
                 if (!st.equals(sst)) {
                     BaseVideoPlayer.this.speed.setText(st);
                     BaseVideoPlayer.this.setSpeed(sp);
-                    if ((double)sp == 1.0D) {
+                    if ((double) sp == 1.0D) {
                         Toast.makeText(BaseVideoPlayer.this.getContext(), "已恢复正常播放速度", Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(BaseVideoPlayer.this.getContext(), "已切换为" + sp + "倍速播放", Toast.LENGTH_LONG).show();
@@ -226,7 +200,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
         this.tryWatchView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (tryWatchListenner!=null){
+                if (tryWatchListenner != null) {
                     tryWatchListenner.pay();
                 }
             }
@@ -237,7 +211,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
             public void onClick(View v) {
                 BaseVideoPlayer.this.tryPlay.setVisibility(GONE);
                 startPlayLogic();
-                if (mTryPlayListener!=null){
+                if (mTryPlayListener != null) {
                     mTryPlayListener.TryPlay(v);
                 }
             }
@@ -297,7 +271,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
         this.share.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 if (BaseVideoPlayer.this.mShareListener != null) {
-                    BaseVideoPlayer.this.mShareListener.Share(v,mIfCurrentIsFullscreen);
+                    BaseVideoPlayer.this.mShareListener.Share(v, mIfCurrentIsFullscreen);
                     if (BaseVideoPlayer.this.mCurrentState != 6) {
                         BaseVideoPlayer.this.hideAllWidget();
                         BaseVideoPlayer.this.mTakeScreenTimer.run();
@@ -326,8 +300,8 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
                             mHpplayUtils.seekTo(duration / 1000);
                         }
                     }
-                }else {
-                    Toast.makeText(mContext,"试看视频，不能投屏",Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(mContext, "试看视频，不能投屏", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -350,7 +324,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
         nextVideo.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mNextListener!=null) {
+                if (mNextListener != null) {
                     mNextListener.next(v);
                 }
             }
@@ -371,7 +345,6 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
                 if (fromUser) {
                     BaseVideoPlayer.this.changeAppBrightness(progress);
                 }
-
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -407,19 +380,18 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
         });
     }
 
-
     @Override
     protected void setProgressAndTime(int progress, int secProgress, int currentTime, int totalTime, boolean forceChange) {
         super.setProgressAndTime(progress, secProgress, currentTime, totalTime, forceChange);
-        if (mPlayProgressListener!=null){
+        if (mPlayProgressListener != null) {
             int totalSeconds = totalTime / 1000;
             int currentSeconds = currentTime / 1000;
-            mPlayProgressListener.PlayProgress(currentSeconds,totalSeconds,mIfCurrentIsFullscreen);
+            mPlayProgressListener.PlayProgress(currentSeconds, totalSeconds, mIfCurrentIsFullscreen);
         }
-        if (tryWatch){
-            if (tryWatchTime<currentTime){//试看
+        if (tryWatch) {
+            if (tryWatchTime < currentTime) {//试看
                 onPause();
-                if (tryWatchListenner!=null){
+                if (tryWatchListenner != null) {
                     tryWatchListenner.tryWatchEnd();
                     cancelProgressTimer();
                 }
@@ -428,7 +400,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
     }
 
     private int getSystemBrightness() {
-        WindowManager.LayoutParams lpa = ((Activity)this.mContext).getWindow().getAttributes();
+        WindowManager.LayoutParams lpa = ((Activity) this.mContext).getWindow().getAttributes();
         float systemBrightness = lpa.screenBrightness;
         if (systemBrightness <= 0.00f) {
             systemBrightness = 0.50f;
@@ -464,13 +436,6 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
         }
     }
 
-    //    @Override
-    //    protected void setTextAndProgress(int secProgress) {
-    //        super.setTextAndProgress(secProgress);
-    //        int position = getCurrentPositionWhenPlaying()/1000;
-    //        int duration = getDuration()/1000;
-    //
-    //    }
 
     public boolean onTouch(View v, MotionEvent event) {
         this.selecRecycleView.setVisibility(GONE);
@@ -529,7 +494,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
     }
 
     private int getSystemBattery(Context context) {
-        Intent batteryInfoIntent = context.getApplicationContext().registerReceiver((BroadcastReceiver)null, new IntentFilter("android.intent.action.BATTERY_CHANGED"));
+        Intent batteryInfoIntent = context.getApplicationContext().registerReceiver((BroadcastReceiver) null, new IntentFilter("android.intent.action.BATTERY_CHANGED"));
         int level = batteryInfoIntent.getIntExtra("level", 0);
         int batterySum = batteryInfoIntent.getIntExtra("scale", 100);
         int percentBattery = 100 * level / batterySum;
@@ -548,59 +513,47 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
 
     protected void updateStartImage() {
         //                super.updateStartImage();
-        if (mPlayTypeListener!=null){//播放状态监听
-            mPlayTypeListener.PlayType(this.mCurrentState,mIfCurrentIsFullscreen);
+        tryPlay.setVisibility(GONE);
+        mStartButton.setVisibility(mCurrentState == CURRENT_STATE_PLAYING?GONE:VISIBLE);
+        volumLight.setVisibility(GONE);
+        selecRecycleView.setVisibility(GONE);
+        //隐藏设备列表
+        if (mHpplayUtils != null) {
+            mHpplayUtils.dismissDeviceDialog();
         }
-        this.tryPlay.setVisibility(GONE);
-        ImageView imageView = (ImageView) mStartButton;
+        //播放状态监听
+        if (mPlayTypeListener != null) {
+            mPlayTypeListener.PlayType(this.mCurrentState, mIfCurrentIsFullscreen);
+        }
+
         if (mCurrentState == CURRENT_STATE_PLAYING) {
-            imageView.setVisibility(GONE);
-        }else {
-            imageView.setVisibility(VISIBLE);
-        }
-        if (this.mCurrentState == 2) {
-            this.bottom_start.setImageResource(drawable.video_play);
-            this.mStartButton.setVisibility(GONE);
-            this.takeScreen.setVisibility(mIfCurrentIsFullscreen && showTakeScreen?VISIBLE:GONE);
-            if (changeResolution){
-                Toast.makeText(BaseVideoPlayer.this.getContext(), "清晰度已切换至" + nowResolution.resolutionName + nowResolution.resolution, Toast.LENGTH_LONG).show();
+            bottom_start.setImageResource(drawable.video_play);
+            mStartButton.setVisibility(GONE);
+            takeScreen.setVisibility(mIfCurrentIsFullscreen && showTakeScreen ? VISIBLE : GONE);
+            if (changeResolution) {
+                Toast.makeText(getContext(), "清晰度已切换至" + nowResolution.resolutionName + nowResolution.resolution, Toast.LENGTH_LONG).show();
                 changeResolution = false;
             }
-        } else if (this.mCurrentState == 7) {
-            this.bottom_start.setImageResource(drawable.video_stop);
-            this.mStartButton.setVisibility(VISIBLE);
-        } else if (this.mCurrentState == 6){
-            if (mIfCurrentIsFullscreen) {
-                takeScreen.setVisibility(showTakeScreen?VISIBLE:GONE);
-            }else {
-                takeScreen.setVisibility(GONE);
-            }
-
-            this.mStartButton.setVisibility(GONE);
-
-            if (mIfCurrentIsFullscreen){
-                getCurPlay().tryPlay.setVisibility(getCurPlay().showTryPlayView?VISIBLE:GONE);
-            }else {
-                this.tryPlay.setVisibility(showTryPlayView ? VISIBLE : GONE);
-            }
-        } else if (this.mCurrentState == GSYVideoView.CURRENT_STATE_PLAYING_BUFFERING_START){//缓冲中
-            this.mStartButton.setVisibility(GONE);
+        } else if (mCurrentState == CURRENT_STATE_ERROR) {//播放错误
+            bottom_start.setImageResource(drawable.video_stop);
+            mStartButton.setVisibility(VISIBLE);
+        } else if (mCurrentState == CURRENT_STATE_AUTO_COMPLETE) {//播放结束
+            bottom_start.setImageResource(drawable.video_stop);
+            takeScreen.setVisibility(mIfCurrentIsFullscreen && showTakeScreen ? VISIBLE : GONE);
+            mStartButton.setVisibility(GONE);
+            tryPlay.setVisibility(showTryPlayView ? VISIBLE : GONE);
+        } else if (mCurrentState == CURRENT_STATE_PLAYING_BUFFERING_START) {//缓冲中
+            mStartButton.setVisibility(GONE);
         } else {
-            this.bottom_start.setImageResource(drawable.video_stop);
-            this.mStartButton.setVisibility(VISIBLE);
-        }
-        this.volumLight.setVisibility(GONE);
-        this.selecRecycleView.setVisibility(GONE);
-        //隐藏设备列表
-        if (mHpplayUtils!=null) {
-            mHpplayUtils.dismissDeviceDialog();
+            bottom_start.setImageResource(drawable.video_stop);
+            mStartButton.setVisibility(VISIBLE);
         }
     }
 
     protected void onClickUiToggle() {
         super.onClickUiToggle();
         if (this.mIfCurrentIsFullscreen) {
-            this.takeScreen.setVisibility(showTakeScreen && this.mBottomContainer.getVisibility()==VISIBLE?VISIBLE:GONE);
+            this.takeScreen.setVisibility(showTakeScreen && this.mBottomContainer.getVisibility() == VISIBLE ? VISIBLE : GONE);
             this.selecRecycleView.setVisibility(GONE);
         } else {
             this.takeScreen.setVisibility(GONE);
@@ -619,7 +572,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
     protected void touchDoubleUp() {
         super.touchDoubleUp();
         if (this.mIfCurrentIsFullscreen) {
-            this.takeScreen.setVisibility(showTakeScreen?VISIBLE:VISIBLE);
+            this.takeScreen.setVisibility(showTakeScreen ? VISIBLE : VISIBLE);
         }
     }
 
@@ -632,7 +585,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
     protected void startDismissControlViewTimer() {
         this.cancelDismissControlViewTimer();
         this.mPostDismiss = true;
-        this.postDelayed(this.mTakeScreenTimer, (long)this.mDismissControlTime);
+        this.postDelayed(this.mTakeScreenTimer, (long) this.mDismissControlTime);
         this.getPowerAndTime();
         if (mIfCurrentIsFullscreen && mLockCurScreen) {
             setViewShowState(mBottomProgressBar, VISIBLE);
@@ -650,12 +603,11 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
     }
 
     public GSYBaseVideoPlayer startWindowFullscreen(Context context, boolean actionBar, boolean statusBar) {
-        BaseVideoPlayer landLayoutVideo = (BaseVideoPlayer)super.startWindowFullscreen(context, actionBar, statusBar);
+        BaseVideoPlayer landLayoutVideo = (BaseVideoPlayer) super.startWindowFullscreen(context, actionBar, statusBar);
         landLayoutVideo.mResolutionList = this.mResolutionList;
         if (this.mResolutionList == null) {
             landLayoutVideo.resolution.setVisibility(GONE);
         }
-
         landLayoutVideo.showTakeScreen = this.showTakeScreen;
         landLayoutVideo.showShare = this.showShare;
         landLayoutVideo.showSpeed = this.showSpeed;
@@ -663,10 +615,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
         landLayoutVideo.showMore = this.showMore;
         landLayoutVideo.showAirplay = this.showAirplay;
         landLayoutVideo.showNextVideo = this.showNextVideo;
-        landLayoutVideo.mTextureView =this.mTextureView;
-
-
-
+        landLayoutVideo.mTextureView = this.mTextureView;
         landLayoutVideo.mTakeScreenListener = this.mTakeScreenListener;
         landLayoutVideo.mShareListener = this.mShareListener;
         landLayoutVideo.mNextListener = this.mNextListener;
@@ -674,15 +623,13 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
         landLayoutVideo.speed.setText(this.speedText);
         landLayoutVideo.speed.setVisibility(this.speed.getVisibility());
         landLayoutVideo.bottom_start.setVisibility(this.bottom_start.getVisibility());
-
-        landLayoutVideo.nextVideo.setVisibility(showNextVideo?VISIBLE:GONE);
-        landLayoutVideo.takeScreen.setVisibility(showTakeScreen?VISIBLE:GONE);
-        landLayoutVideo.more.setVisibility(showMore?VISIBLE:GONE);
-        landLayoutVideo.airplay.setVisibility(showAirplay?VISIBLE:GONE);
-        landLayoutVideo.share.setVisibility(showShare?VISIBLE:GONE);
-        landLayoutVideo.speed.setVisibility(showSpeed?VISIBLE:GONE);
-        landLayoutVideo.resolution.setVisibility(showResolution?VISIBLE:GONE);
-
+        landLayoutVideo.nextVideo.setVisibility(showNextVideo ? VISIBLE : GONE);
+        landLayoutVideo.takeScreen.setVisibility(showTakeScreen ? VISIBLE : GONE);
+        landLayoutVideo.more.setVisibility(showMore ? VISIBLE : GONE);
+        landLayoutVideo.airplay.setVisibility(showAirplay ? VISIBLE : GONE);
+        landLayoutVideo.share.setVisibility(showShare ? VISIBLE : GONE);
+        landLayoutVideo.speed.setVisibility(showSpeed ? VISIBLE : GONE);
+        landLayoutVideo.resolution.setVisibility(showResolution ? VISIBLE : GONE);
         landLayoutVideo.mActivity = mActivity;
         landLayoutVideo.mHpplayUtils = mHpplayUtils;
         landLayoutVideo.orientationUtils = orientationUtils;
@@ -707,22 +654,18 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
         landLayoutVideo.closeDoubleClick = this.closeDoubleClick;
         landLayoutVideo.gsyVideoOptionBuilder = this.gsyVideoOptionBuilder;
         //设置是否可以快进
-        setCloseProgressBar(landLayoutVideo.mProgressBar,landLayoutVideo.mBottomProgressBar);
-        this.getPowerAndTime();
+        setCloseProgressBar(landLayoutVideo.mProgressBar, landLayoutVideo.mBottomProgressBar);
         return landLayoutVideo;
     }
 
     protected void resolveNormalVideoShow(View oldF, ViewGroup vp, GSYVideoPlayer gsyVideoPlayer) {
         super.resolveNormalVideoShow(oldF, vp, gsyVideoPlayer);
         if (gsyVideoPlayer != null) {
-            BaseVideoPlayer landLayoutVideo = (BaseVideoPlayer)gsyVideoPlayer;
+            BaseVideoPlayer landLayoutVideo = (BaseVideoPlayer) gsyVideoPlayer;
             landLayoutVideo.dismissProgressDialog();
             landLayoutVideo.dismissVolumeDialog();
             landLayoutVideo.dismissBrightnessDialog();
             landLayoutVideo.resolution.setVisibility(GONE);
-
-
-
             this.showTakeScreen = landLayoutVideo.showTakeScreen;
             this.showShare = landLayoutVideo.showShare;
             this.showSpeed = landLayoutVideo.showSpeed;
@@ -731,7 +674,6 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
             this.showAirplay = landLayoutVideo.showAirplay;
             this.showNextVideo = landLayoutVideo.showNextVideo;
             this.mTextureView = landLayoutVideo.mTextureView;
-
             this.mShareListener = landLayoutVideo.mShareListener;
             this.speedText = landLayoutVideo.speed.getText().toString();
             this.speed.setVisibility(landLayoutVideo.speed.getVisibility());
@@ -760,18 +702,17 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
             this.closeDoubleClick = landLayoutVideo.closeDoubleClick;
             this.gsyVideoOptionBuilder = landLayoutVideo.gsyVideoOptionBuilder;
             getTitleTextView().setVisibility(GONE);
-
-            this.airplay.setVisibility(showAirplay?VISIBLE:GONE);
-            this.share.setVisibility(showShare?VISIBLE:GONE);
+            this.airplay.setVisibility(showAirplay ? VISIBLE : GONE);
+            this.share.setVisibility(showShare ? VISIBLE : GONE);
             //设置是否可以快进
-            setCloseProgressBar(this.mProgressBar,this.mBottomProgressBar);
+            setCloseProgressBar(this.mProgressBar, this.mBottomProgressBar);
             //点击投屏旋转的屏幕
-            if (clickAirPlay){
-                if (mHpplayUtils!=null) {
+            if (clickAirPlay) {
+                if (mHpplayUtils != null) {
                     //展示设备弹框
                     mHpplayUtils.showDeviceDialog();
                     int duration = getCurrentPositionWhenPlaying();
-                    mHpplayUtils.seekTo(duration/1000);
+                    mHpplayUtils.seekTo(duration / 1000);
                 }
                 clickAirPlay = false;
             }
@@ -789,7 +730,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
     }
 
     private BaseVideoPlayer getCurPlay() {
-        return this.getFullWindowPlayer() != null ? (BaseVideoPlayer)this.getFullWindowPlayer() : this;
+        return this.getFullWindowPlayer() != null ? (BaseVideoPlayer) this.getFullWindowPlayer() : this;
     }
 
     public void onBackPressed() {
@@ -802,6 +743,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
         }
         GSYVideoManager.backFromWindowFull(this.getContext());
     }
+
     public void backNormal() {
         if (this.orientationUtils != null) {
             this.orientationUtils.backToProtVideo();
@@ -817,21 +759,25 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
 
     public void onResume() {
         //隐藏设备列表
-        if (mHpplayUtils!=null) {
-            if (mHpplayUtils.getControlDialog()==null && mHpplayUtils.getDeviceDialog()==null){
+        if (mHpplayUtils != null) {
+            if (mHpplayUtils.getControlDialog() == null && mHpplayUtils.getDeviceDialog() == null) {
                 this.getCurPlay().onVideoResume(false);
                 this.isPause = false;
-                this.hideAllWidget();
+                if (mCurrentState!=CURRENT_STATE_AUTO_COMPLETE){
+                    this.hideAllWidget();
+                }
             } else {
-                if (mHpplayUtils.getControlDialog()!=null && mHpplayUtils.getControlDialog().isShowing()){
+                if (mHpplayUtils.getControlDialog() != null && mHpplayUtils.getControlDialog().isShowing()) {
                     return;
                 }
-                if (mHpplayUtils.getDeviceDialog()!=null && mHpplayUtils.getDeviceDialog().isShowing()){
+                if (mHpplayUtils.getDeviceDialog() != null && mHpplayUtils.getDeviceDialog().isShowing()) {
                     return;
                 }
                 this.getCurPlay().onVideoResume(false);
                 this.isPause = false;
-                this.hideAllWidget();
+                if (mCurrentState!=CURRENT_STATE_AUTO_COMPLETE){
+                    this.hideAllWidget();
+                }
             }
         }
     }
@@ -852,6 +798,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
             this.onConfigurationChanged(this.mActivity, newConfig, this.orientationUtils, true, true);
         }
         setVideoAllCallBack(null);
+        getPowerAndTime();
     }
 
     public void initSettings(Activity activity) {
@@ -859,18 +806,18 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
         this.initSetting();
         getTitleTextView().setVisibility(GONE);
         //初始化乐播投屏
-        mHpplayUtils = new HpplayUtils(activity,this);
+        mHpplayUtils = new HpplayUtils(activity, this);
     }
 
     public void playVideo(String url, String title, boolean cachevideo, long seekOnStart) {
-        this.playurl = url.replace("https://","http://");
+        this.playurl = url.replace("https://", "http://");
         this.isCache = cachevideo;
         this.release();
         if (!mIfCurrentIsFullscreen) {
             this.gsyVideoOptionBuilder.setShowFullAnimation(false).setUrl(playurl).setCacheWithPlay(cachevideo).setVideoTitle(title).setSeekOnStart(seekOnStart).build(this);
             this.gsyVideoOptionBuilder.build(this);
-        }else {
-            getCurrentPlayer().setUp(playurl,cachevideo,title);
+        } else {
+            getCurrentPlayer().setUp(playurl, cachevideo, title);
         }
         getCurrentPlayer().startPlayLogic();
     }
@@ -881,7 +828,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
     }
 
     public void playVideo(List<ResolutionModel> list, String title, boolean cachevideo) {
-        ResolutionModel resolutionModel = (ResolutionModel)list.get(list.size() - 1);
+        ResolutionModel resolutionModel = (ResolutionModel) list.get(list.size() - 1);
         this.mResolutionList = list;
         this.resolutionText = resolutionModel.resolutionName;
         this.resolution.setText(this.resolutionText);
@@ -895,86 +842,93 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
     /**
      * 关闭双击暂停
      */
-    public void closeDoubleClick(boolean closeDoubleClick){
+    public void closeDoubleClick(boolean closeDoubleClick) {
         this.closeDoubleClick = closeDoubleClick;
     }
 
     /**
      * 关闭进度拖动
      */
-    public void setCloseSeek(boolean closeSeek){
+    public void setCloseSeek(boolean closeSeek) {
         this.closeSeek = closeSeek;
-        setCloseProgressBar(mProgressBar,mBottomProgressBar);
+        setCloseProgressBar(mProgressBar, mBottomProgressBar);
 
     }
+
     /**
      * 设置不能拖动进度进度颜色
      */
-    private void setCloseProgressBar(SeekBar seekBar,ProgressBar bottomBar){
+    private void setCloseProgressBar(SeekBar seekBar, ProgressBar bottomBar) {
         seekBar.setEnabled(!closeSeek);
-        if (this.closeSeek){
-            if (mIfCurrentIsFullscreen){
+        if (this.closeSeek) {
+            if (mIfCurrentIsFullscreen) {
                 seekBar.setProgressDrawable(mContext.getResources().getDrawable(drawable.video_noseek_progress));
                 seekBar.setThumb(null);
-            }else {
+            } else {
                 seekBar.setProgressDrawable(mContext.getResources().getDrawable(drawable.normal_video_noseek_progress));
                 seekBar.setThumb(null);
             }
             bottomBar.setProgressDrawable(mContext.getResources().getDrawable(drawable.video_progress_no));
-        }else {
-                if (mIfCurrentIsFullscreen){
-                    seekBar.setProgressDrawable(mContext.getResources().getDrawable(drawable.video_seek_progress));
-                    seekBar.setThumb(mContext.getResources().getDrawable(drawable.video_seek_thumb_drawable));
-                }else {
-                    seekBar.setProgressDrawable(mContext.getResources().getDrawable(drawable.normal_video_seek_progress));
-                    seekBar.setThumb(mContext.getResources().getDrawable(drawable.video_seek_thumb_drawable));
-                }
+        } else {
+            if (mIfCurrentIsFullscreen) {
+                seekBar.setProgressDrawable(mContext.getResources().getDrawable(drawable.video_seek_progress));
+                seekBar.setThumb(mContext.getResources().getDrawable(drawable.video_seek_thumb_drawable));
+            } else {
+                seekBar.setProgressDrawable(mContext.getResources().getDrawable(drawable.normal_video_seek_progress));
+                seekBar.setThumb(mContext.getResources().getDrawable(drawable.video_seek_thumb_drawable));
+            }
             bottomBar.setProgressDrawable(mContext.getResources().getDrawable(drawable.video_progress));
         }
     }
+
     /**
      * 不显示下一集
      */
-    public void setShowNextVideo(boolean showNextVideo){
+    public void setShowNextVideo(boolean showNextVideo) {
         this.showNextVideo = showNextVideo;
     }
+
     /**
      * 是否展示截屏
      */
-    public void showTakeScreen(boolean showTakeScreen){
+    public void showTakeScreen(boolean showTakeScreen) {
         this.showTakeScreen = showTakeScreen;
     }
+
     /**
      * 是否展示分享
      */
-    public void showShare(boolean showShare){
+    public void showShare(boolean showShare) {
         this.showShare = showShare;
-        this.share.setVisibility(showShare?VISIBLE:GONE);
+        this.share.setVisibility(showShare ? VISIBLE : GONE);
     }
+
     /**
      * 是否展示更多功能
      */
-    public void showMore(boolean showMore){
+    public void showMore(boolean showMore) {
         this.showMore = showMore;
     }
+
     /**
      * 是否展示投屏
      */
-    public void showAirplay(boolean showAirplay){
+    public void showAirplay(boolean showAirplay) {
         this.showAirplay = showAirplay;
-        this.airplay.setVisibility(showAirplay?VISIBLE:GONE);
+        this.airplay.setVisibility(showAirplay ? VISIBLE : GONE);
     }
 
     /**
      * 是否展示倍速
      */
-    public void showSpeed(boolean showSpeed){
+    public void showSpeed(boolean showSpeed) {
         this.showSpeed = showSpeed;
     }
+
     /**
      * 是否展示清晰度
      */
-    public void showResolution(boolean showResolution){
+    public void showResolution(boolean showResolution) {
         this.showResolution = showResolution;
     }
 
@@ -982,39 +936,49 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
     /**
      * 播放完成是否显示重播按钮
      */
-    public void setPlayOverShowTryPlayView(boolean showTryPlayView){
+    public void setPlayOverShowTryPlayView(boolean showTryPlayView) {
         this.showTryPlayView = showTryPlayView;
         getCurPlay().showTryPlayView = showTryPlayView;
     }
+
     /**
      * 设置试看时长
+     *
      * @param tryWatchTime 秒
      */
-    public void setTryWatchTime(int tryWatchTime){
-        this.tryWatchTime = tryWatchTime*1000;
+    public void setTryWatchTime(int tryWatchTime) {
+        this.tryWatchTime = tryWatchTime * 1000;
     }
-    public void setShowTryWatch(boolean show){
-        getCurPlay().tryWatchView.setVisibility(show?VISIBLE:GONE);
+
+    public void setShowTryWatch(boolean show) {
+        getCurPlay().tryWatchView.setVisibility(show ? VISIBLE : GONE);
     }
-    public void setTryWatch(boolean tryWatch){
+
+    public void setTryWatch(boolean tryWatch) {
         this.tryWatch = tryWatch;
     }
+
     //--------------------------试看监听-------------------------------
-    public void setTryWatchListenner(TryWatchListener tryWatchListenner){
+    public void setTryWatchListenner(TryWatchListener tryWatchListenner) {
         this.tryWatchListenner = tryWatchListenner;
     }
-    public interface TryWatchListener{
+
+    public interface TryWatchListener {
         void tryWatchEnd();
+
         void pay();
     }
+
     //--------------------------试看监听-------------------------------
     //--------------------------截屏监听-------------------------------
     public void setTakeScreenListener(BaseVideoPlayer.TakeScreenListener takeScreenListener) {
         this.mTakeScreenListener = takeScreenListener;
     }
+
     public interface TakeScreenListener {
         void takeScreen(Bitmap var1);
     }
+
     //--------------------------截屏监听-------------------------------
     //--------------------------分享监听-------------------------------
     public void setShareListener(BaseVideoPlayer.ShareListener shareListener) {
@@ -1022,39 +986,47 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
     }
 
     public interface ShareListener {
-        void Share(View var1,boolean isFullscreen);
+        void Share(View var1, boolean isFullscreen);
     }
+
     //--------------------------分享监听-------------------------------
     //--------------------------下一集-------------------------------
     public void setNextListener(BaseVideoPlayer.NextListener nextListener) {
         this.mNextListener = nextListener;
     }
+
     public interface NextListener {
         void next(View v);
     }
+
     //--------------------------下一集-------------------------------
     //--------------------------重播-------------------------------
     public void setTryPlayListener(BaseVideoPlayer.TryPlayListener tryPlayListener) {
         this.mTryPlayListener = tryPlayListener;
     }
+
     public interface TryPlayListener {
         void TryPlay(View v);
     }
+
     //--------------------------重播-------------------------------
     //--------------------------状态监听-------------------------------
     public void setPlayTypeListener(BaseVideoPlayer.PlayTypeListener playTypeListener) {
         this.mPlayTypeListener = playTypeListener;
     }
+
     public interface PlayTypeListener {
-        void PlayType(int type,boolean isFullscreen);
+        void PlayType(int type, boolean isFullscreen);
     }
+
     //--------------------------状态监听-------------------------------
     //--------------------------播放进度-------------------------------
     public void setPlayProgressListener(BaseVideoPlayer.PlayProgressListener playProgressListener) {
         this.mPlayProgressListener = playProgressListener;
     }
+
     public interface PlayProgressListener {
-        void PlayProgress(int curTime,int totalTime,boolean isFullscreen);
+        void PlayProgress(int curTime, int totalTime, boolean isFullscreen);
     }
     //--------------------------播放进度-------------------------------
 
@@ -1063,18 +1035,20 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
         }
 
         public void run() {
-            if (BaseVideoPlayer.this.mCurrentState != 0 && BaseVideoPlayer.this.mCurrentState != 7 && BaseVideoPlayer.this.mCurrentState != 6) {
-                if (BaseVideoPlayer.this.getActivityContext() != null) {
-                    BaseVideoPlayer.this.hideAllWidget();
-                    BaseVideoPlayer.this.setViewShowState(BaseVideoPlayer.this.mLockScreen, 8);
-                    BaseVideoPlayer.this.setViewShowState(BaseVideoPlayer.this.takeScreen, 8);
-                    if (BaseVideoPlayer.this.mHideKey && BaseVideoPlayer.this.mIfCurrentIsFullscreen && BaseVideoPlayer.this.mShowVKey) {
-                        CommonUtil.hideNavKey(BaseVideoPlayer.this.mContext);
+            if (mCurrentState != CURRENT_STATE_NORMAL
+                    && mCurrentState != CURRENT_STATE_ERROR
+                    && mCurrentState != CURRENT_STATE_AUTO_COMPLETE) {
+                if (getActivityContext() != null) {
+                    hideAllWidget();
+                    setViewShowState(mLockScreen, GONE);
+                    setViewShowState(takeScreen, GONE);
+                    if (mHideKey && mIfCurrentIsFullscreen && mShowVKey) {
+                        CommonUtil.hideNavKey(mContext);
                     }
                 }
 
-                if (BaseVideoPlayer.this.mPostDismiss) {
-                    BaseVideoPlayer.this.postDelayed(this, (long)BaseVideoPlayer.this.mDismissControlTime);
+                if (mPostDismiss) {
+                    postDelayed(this, (long) mDismissControlTime);
                 }
                 if (mIfCurrentIsFullscreen && mLockCurScreen) {
                     setViewShowState(mBottomProgressBar, GONE);
@@ -1083,11 +1057,13 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer{
 
         }
     }
+
     /**
      * 获取ijkmediaplayer
+     *
      * @return
      */
-    public IjkMediaPlayer getIjkMediaPlayer(){
+    public IjkMediaPlayer getIjkMediaPlayer() {
         return GSYVideoManager.getIjkMediaPlayeru();
     }
 

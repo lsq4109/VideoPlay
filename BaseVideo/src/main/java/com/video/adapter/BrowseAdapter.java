@@ -17,11 +17,6 @@ import com.huoyan.basevideo.R;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Zippo on 2018/6/8.
- * Date: 2018/6/8
- * Time: 17:00:39
- */
 public class BrowseAdapter extends RecyclerView.Adapter<BrowseAdapter.RecyclerHolder> {
 
     private static final String TAG = "BrowseAdapter";
