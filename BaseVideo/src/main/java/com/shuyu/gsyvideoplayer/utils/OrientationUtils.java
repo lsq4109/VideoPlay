@@ -78,7 +78,7 @@ public class OrientationUtils {
                     return;
                 }
                 // 设置竖屏
-                if (((rotation >= 0) && (rotation <= mOrientationOption.getNormalPortraitAngleStart()))
+                if (((rotation > 0) && (rotation <= mOrientationOption.getNormalPortraitAngleStart()))
                         || (rotation >= mOrientationOption.getNormalPortraitAngleEnd())) {
                     if (mClick) {
                         if (mIsLand > LAND_TYPE_NULL && !mClickLand) {

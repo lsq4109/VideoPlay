@@ -529,7 +529,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer {
         if (mCurrentState == CURRENT_STATE_PLAYING) {
             bottom_start.setImageResource(drawable.video_play);
             mStartButton.setVisibility(GONE);
-            takeScreen.setVisibility(mIfCurrentIsFullscreen && showTakeScreen ? VISIBLE : GONE);
+            takeScreen.setVisibility(mIfCurrentIsFullscreen && showTakeScreen && !mLockCurScreen ? VISIBLE : GONE);
             if (changeResolution) {
                 Toast.makeText(getContext(), "清晰度已切换至" + nowResolution.resolutionName + nowResolution.resolution, Toast.LENGTH_LONG).show();
                 changeResolution = false;

@@ -493,9 +493,9 @@ public class StandardGSYVideoPlayer extends GSYVideoPlayer {
     protected void changeUiToPlayingShow() {
         Debuger.printfLog("changeUiToPlayingShow");
 
-        setViewShowState(mTopContainer, VISIBLE);
-        setViewShowState(mBottomContainer, VISIBLE);
-        setViewShowState(mStartButton, VISIBLE);
+        setViewShowState(mTopContainer,mIfCurrentIsFullscreen && mLockCurScreen?GONE: VISIBLE);
+        setViewShowState(mBottomContainer, mIfCurrentIsFullscreen && mLockCurScreen?GONE: VISIBLE);
+        setViewShowState(mStartButton, mIfCurrentIsFullscreen && mLockCurScreen?GONE: VISIBLE);
         setViewShowState(mLoadingProgressBar, INVISIBLE);
         setViewShowState(mThumbImageViewLayout, INVISIBLE);
         //setViewShowState(mBottomProgressBar, INVISIBLE);
