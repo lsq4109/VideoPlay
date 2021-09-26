@@ -125,6 +125,9 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer {
     //禁止双击暂停
     protected boolean closeDoubleClick = false;
 
+    //程序后台时的状态
+    protected int onPausePlayState=CURRENT_STATE_PLAYING;
+
 
     public BaseVideoPlayer(Context context, Boolean fullFlag) {
         super(context, fullFlag);
@@ -752,6 +755,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer {
     }
 
     public void onPause() {
+        onPausePlayState = mCurrentState;
         this.getCurPlay().onVideoPause();
         this.isPause = true;
     }
@@ -761,10 +765,12 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer {
         //隐藏设备列表
         if (mHpplayUtils != null) {
             if (mHpplayUtils.getControlDialog() == null && mHpplayUtils.getDeviceDialog() == null) {
-                this.getCurPlay().onVideoResume(false);
-                this.isPause = false;
-                if (mCurrentState!=CURRENT_STATE_AUTO_COMPLETE){
-                    this.hideAllWidget();
+                if (onPausePlayState!=CURRENT_STATE_PAUSE) {
+                    this.getCurPlay().onVideoResume(false);
+                    this.isPause = false;
+                    if (mCurrentState!=CURRENT_STATE_AUTO_COMPLETE){
+                        this.hideAllWidget();
+                    }
                 }
             } else {
                 if (mHpplayUtils.getControlDialog() != null && mHpplayUtils.getControlDialog().isShowing()) {
@@ -773,10 +779,12 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer {
                 if (mHpplayUtils.getDeviceDialog() != null && mHpplayUtils.getDeviceDialog().isShowing()) {
                     return;
                 }
-                this.getCurPlay().onVideoResume(false);
-                this.isPause = false;
-                if (mCurrentState!=CURRENT_STATE_AUTO_COMPLETE){
-                    this.hideAllWidget();
+                if (onPausePlayState!=CURRENT_STATE_PAUSE) {
+                    this.getCurPlay().onVideoResume(false);
+                    this.isPause = false;
+                    if (mCurrentState!=CURRENT_STATE_AUTO_COMPLETE){
+                        this.hideAllWidget();
+                    }
                 }
             }
         }
