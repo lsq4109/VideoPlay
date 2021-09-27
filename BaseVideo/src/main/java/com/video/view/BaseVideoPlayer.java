@@ -758,6 +758,8 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer {
         onPausePlayState = mCurrentState;
         this.getCurPlay().onVideoPause();
         this.isPause = true;
+        orientationUtils.setIsPause(true);
+
     }
 
 
@@ -771,6 +773,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer {
                     if (mCurrentState!=CURRENT_STATE_AUTO_COMPLETE){
                         this.hideAllWidget();
                     }
+                    orientationUtils.setIsPause(false);
                 }
             } else {
                 if (mHpplayUtils.getControlDialog() != null && mHpplayUtils.getControlDialog().isShowing()) {
@@ -785,6 +788,7 @@ public class BaseVideoPlayer extends StandardGSYVideoPlayer {
                     if (mCurrentState!=CURRENT_STATE_AUTO_COMPLETE){
                         this.hideAllWidget();
                     }
+                    orientationUtils.setIsPause(false);
                 }
             }
         }
